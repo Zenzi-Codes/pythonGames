@@ -131,11 +131,11 @@ while True:
  #       winsound.PlaySound("#", winsound.SND_ASYNC) # add collision sound
 
     # left paddle chases ball
-    if (ball.ycor() - paddle_a.ycor() >= 15) and (ball.xcor() < 0):
-        paddle_a.sety(paddle_a.ycor() + 20)
+    if (ball.ycor() - paddle_a.ycor() >= 15) and (ball.xcor() < 300):
+        paddle_a_up()
     
-    if (ball.ycor() - paddle_a.ycor() <= -15) and (ball.xcor() < 0):
-        paddle_a.sety(paddle_a.ycor() - 20)
+    if (ball.ycor() - paddle_a.ycor() <= -15) and (ball.xcor() < 300):
+        paddle_a_dwn()
 
     # ball changes gets faster as you play
     ball.dx *= 1.00003
