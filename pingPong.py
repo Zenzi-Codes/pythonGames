@@ -2,12 +2,17 @@
 # https://www.youtube.com/watch?v=XGfGcyHPhc&feature=youtu.be
 
 import turtle
+import winsound
 
 app = turtle.Screen()
-app.title("Ping Pong")
-app.bgcolor("black")
+app.title("Zenzi-Pong")
+app.bgcolor("#2c2925")
 app.setup(width=800, height=600)
 app.tracer(0)
+
+# score
+
+score = 0
 
 # Paddle left
 
@@ -15,7 +20,7 @@ paddle_a = turtle.Turtle()
 paddle_a.speed(0) # animation speed not paddle speed
 paddle_a.shape("square")
 paddle_a. shapesize(stretch_wid= 5, stretch_len=1) # making paddle rectangle
-paddle_a.color("white")
+paddle_a.color("#e6b1bd")
 paddle_a.penup()
 paddle_a.goto(-350, 0) # start position of paddle
 
@@ -25,7 +30,7 @@ paddle_b = turtle.Turtle()
 paddle_b.speed(0) 
 paddle_b.shape("square")
 paddle_b. shapesize(stretch_wid= 5, stretch_len=1)
-paddle_b.color("white")
+paddle_b.color("#d53a44")
 paddle_b.penup()
 paddle_b.goto(350, 0) 
 
@@ -33,14 +38,24 @@ paddle_b.goto(350, 0)
 
 ball = turtle.Turtle()
 ball.speed(0) 
-ball.shape("square")
-ball.color("white")
+ball.shape("circle")
+ball.color("#faf2f2")
 ball.penup()
 ball.goto(0, 0) # start position of ball
 
 # ball movement
-ball.dx = 0.3
-ball.dy = 0.3
+ball.dx = 1
+ball.dy = 0.6
+
+# score display
+
+score_board = turtle.Turtle()
+score_board.speed(0)
+score_board.color("#ae4044")
+score_board.penup()
+score_board.hideturtle()
+score_board.goto(160, 260)
+score_board.write("Score: {}".format(score), align="center", font=("Courier", 21, "normal"))
 
 # Functions
 
@@ -67,8 +82,6 @@ def paddle_b_dwn():
 # Keyboard binding
 
 app.listen()
-app.onkeypress(paddle_a_up, "w")
-app.onkeypress(paddle_a_dwn, "s")
 app.onkeypress(paddle_b_up, "Up")
 app.onkeypress(paddle_b_dwn, "Down")
 
@@ -85,10 +98,12 @@ while True:
     if ball.ycor() > 290:
         ball.sety(290)
         ball.dy *= -1
+    #    winsound.PlaySound("#", winsound.SND_ASYNC) # add bounce sound
     
     if ball.ycor() < -290:
         ball.sety(-290)
         ball.dy *= -1
+   #     winsound.PlaySound("#", winsound.SND_ASYNC) # add bounce sound
 
     if ball.xcor() > 390:
         ball.goto(0, 0)
@@ -99,10 +114,28 @@ while True:
         ball.dx *= -1
 
     # collision detection
-    if (ball.xcor() > 340 and ball.xcor() < 350) and (ball.ycor() < paddle_b.ycor() + 40 and ball.ycor() > paddle_b.ycor() - 40):
+    
+    # right paddle collision
+    if (ball.xcor() > 340 and ball.xcor() < 350) and (ball.ycor() < paddle_b.ycor() + 50 and ball.ycor() > paddle_b.ycor() - 50):
         ball.setx(340)
         ball.dx *= -1
+        score_board.clear()
+        score += 5
+        score_board.write("Score: {}".format(score), align="center", font=("Courier", 21, "normal"))
+  #      winsound.PlaySound("#", winsound.SND_ASYNC) # add collision sound
 
-    if (ball.xcor() < -340 and ball.xcor() > -350) and (ball.ycor() < paddle_a.ycor() + 40 and ball.ycor() > paddle_a.ycor() - 40):
+    # left paddle collision
+    if (ball.xcor() < -340 and ball.xcor() > -350) and (ball.ycor() < paddle_a.ycor() + 50 and ball.ycor() > paddle_a.ycor() - 50):
         ball.setx(-340)
         ball.dx *= -1
+ #       winsound.PlaySound("#", winsound.SND_ASYNC) # add collision sound
+
+    # left paddle chases ball
+    if (ball.ycor() - paddle_a.ycor() >= 15) and (ball.xcor() < 0):
+        paddle_a.sety(paddle_a.ycor() + 20)
+    
+    if (ball.ycor() - paddle_a.ycor() <= -15) and (ball.xcor() < 0):
+        paddle_a.sety(paddle_a.ycor() - 20)
+
+    # ball changes gets faster as you play
+    ball.dx *= 1.00003
